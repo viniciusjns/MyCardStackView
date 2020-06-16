@@ -44,7 +44,7 @@ public class CardStackView extends ViewGroup implements ScrollDelegate {
     private final ViewDataObserver mObserver = new ViewDataObserver();
     private int mSelectPosition = DEFAULT_SELECT_POSITION;
     private int mShowHeight;
-    public List<ViewHolder> mViewHolders;
+    private List<ViewHolder> mViewHolders;
 
     private AnimatorAdapter mAnimatorAdapter;
     private int mDuration;
@@ -240,7 +240,8 @@ public class CardStackView extends ViewGroup implements ScrollDelegate {
             holder.onItemExpand(i == mSelectPosition);
             holder.itemView.setTransitionName("cardTransition");
             addView(holder.itemView);
-            setClickAnimator(holder, i);
+            if (i > 0)
+                setClickAnimator(holder, i);
             mStackAdapter.bindViewHolder(holder, i);
         }
         requestLayout();
@@ -795,6 +796,10 @@ public class CardStackView extends ViewGroup implements ScrollDelegate {
 
     public int getShowHeight() {
         return mShowHeight;
+    }
+
+    public List<ViewHolder> getViewHolders() {
+        return mViewHolders;
     }
 
     public int getTotalLength() {

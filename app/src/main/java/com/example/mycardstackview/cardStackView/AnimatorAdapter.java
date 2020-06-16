@@ -6,7 +6,7 @@ import android.animation.AnimatorSet;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
 public abstract class AnimatorAdapter {
-    static final int ANIMATION_DURATION = 200;
+    static final int ANIMATION_DURATION = 300;
 
     protected CardStackView mCardStackView;
     protected AnimatorSet mSet;

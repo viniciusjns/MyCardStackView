@@ -12,14 +12,14 @@ import androidx.core.content.ContextCompat
 import com.example.mycardstackview.cardStackView.CardStackView
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), CardStackView.ItemExpendListener, TestStackAdapter.OnAnimationEnd {
+class MainActivity : AppCompatActivity(), TestStackAdapter.OnAnimationEnd {
 
     private var colors = arrayOf(
         R.color.color_1,
-        R.color.color_2
-//        R.color.color_3,
-//        R.color.color_4,
-//        R.color.color_5,
+        R.color.color_2,
+        R.color.color_3,
+        R.color.color_4,
+        R.color.color_5
 //        R.color.color_6,
 //        R.color.color_7,
 //        R.color.color_8,
@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity(), CardStackView.ItemExpendListener, Test
 //        R.color.color_24,
 //        R.color.color_25,
 //        R.color.color_26
-    )
+    ).toMutableList()
 
     private var selectedPosition = 0
 
@@ -50,13 +50,16 @@ class MainActivity : AppCompatActivity(), CardStackView.ItemExpendListener, Test
         setContentView(R.layout.activity_main)
 
         val testStackAdapter = TestStackAdapter(this, this)
-        stackview_main.itemExpendListener = this
         stackview_main.setAdapter(testStackAdapter)
 //        stackview_main.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary))
 
         Handler().postDelayed(
             {
-                testStackAdapter.updateData(colors.toMutableList())
+                // gambis to fix first position bug when list have only one child
+                if (colors.size == 1)
+                    colors.add(0, android.R.color.transparent)
+
+                testStackAdapter.updateData(colors)
                 configure()
             }, 200
         )
@@ -87,12 +90,7 @@ class MainActivity : AppCompatActivity(), CardStackView.ItemExpendListener, Test
         return (value * density + 0.5f).toInt()
     }
 
-    override fun onItemExpend(expend: Boolean) {
-//        button_container.visibility = if (expend) View.VISIBLE else View.GONE
-    }
-
     override fun endAnimation(view: View, position: Int) {
-//        Toast.makeText(this, "$position", Toast.LENGTH_SHORT).show()
         this.selectedPosition = position
 
         Intent(this, SecondActivity::class.java).apply {
@@ -107,7 +105,7 @@ class MainActivity : AppCompatActivity(), CardStackView.ItemExpendListener, Test
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == 123) {
-            stackview_main.performItemClick(stackview_main.mViewHolders[selectedPosition])
+            stackview_main.performItemClick(stackview_main.viewHolders[selectedPosition])
         }
     }
 }
