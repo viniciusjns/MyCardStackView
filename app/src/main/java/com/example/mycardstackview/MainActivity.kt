@@ -15,9 +15,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity(), TestStackAdapter.OnAnimationEnd {
 
     private var colors = arrayOf(
-        R.color.color_1,
-        R.color.color_2,
-        R.color.color_3,
+//        R.color.color_1,
+//        R.color.color_2,
+//        R.color.color_3,
         R.color.color_4,
         R.color.color_5
 //        R.color.color_6,
@@ -55,10 +55,6 @@ class MainActivity : AppCompatActivity(), TestStackAdapter.OnAnimationEnd {
 
         Handler().postDelayed(
             {
-                // gambis to fix first position bug when list have only one child
-                if (colors.size == 1)
-                    colors.add(0, android.R.color.transparent)
-
                 testStackAdapter.updateData(colors)
                 configure()
             }, 200
@@ -66,28 +62,22 @@ class MainActivity : AppCompatActivity(), TestStackAdapter.OnAnimationEnd {
     }
 
     private fun configure() {
+        val overlapGap = stackview_main.overlapGaps
+        val listSize = colors.size
         val cardHeight = resources.getDimension(R.dimen.card_height)
-        val showHeight = stackview_main.showHeight
-        val paddingTop = (showHeight - (cardHeight * colors.size)) + (dp2px(40) * (colors.size.minus(1)))
-        val scrollY = -paddingTop.toInt()
+        val measureHeight = stackview_main.measuredHeight
+        val paddingTop = ((measureHeight - (cardHeight * listSize)) + ((overlapGap * listSize.minus(1)) * 2)).toInt()
+        val paddingStartEnd = resources.getDimension(R.dimen.default_margin).toInt()
+        val paddingBottom = (resources.getDimension(R.dimen.big_margin)).toInt()
 
-        Log.i("Main", "ShowHeight: ${stackview_main.showHeight}")
-        Log.i("Main", "PaddingTop: $paddingTop")
-        Log.i("Main", "ScrollY: $scrollY")
+        // measureHeight + paddingBottom = showHeight
 
         stackview_main.setPadding(
-            dp2px(16),
-            if (paddingTop < 0) 0 else paddingTop.toInt(),
-            dp2px(16),
-            0)
-
-        if (paddingTop < 0)
-            stackview_main.scrollDelegate.scrollViewTo(0, scrollY)
-    }
-
-    private fun dp2px(value: Int): Int {
-        val density: Float = resources.displayMetrics.density
-        return (value * density + 0.5f).toInt()
+            paddingStartEnd,
+            if (paddingTop < 0) 0 else paddingTop + overlapGap,
+            paddingStartEnd,
+            paddingBottom
+        )
     }
 
     override fun endAnimation(view: View, position: Int) {

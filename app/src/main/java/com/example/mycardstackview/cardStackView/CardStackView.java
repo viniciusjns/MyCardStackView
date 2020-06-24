@@ -240,8 +240,7 @@ public class CardStackView extends ViewGroup implements ScrollDelegate {
             holder.onItemExpand(i == mSelectPosition);
             holder.itemView.setTransitionName("cardTransition");
             addView(holder.itemView);
-            if (i > 0)
-                setClickAnimator(holder, i);
+            setClickAnimator(holder, i);
             mStackAdapter.bindViewHolder(holder, i);
         }
         requestLayout();
@@ -771,7 +770,8 @@ public class CardStackView extends ViewGroup implements ScrollDelegate {
 
     public void setSelectPosition(int selectPosition) {
         mSelectPosition = selectPosition;
-        mItemExpendListener.onItemExpend(mSelectPosition != DEFAULT_SELECT_POSITION);
+        if (mItemExpendListener != null)
+            mItemExpendListener.onItemExpend(mSelectPosition != DEFAULT_SELECT_POSITION);
     }
 
     public int getOverlapGaps() {
